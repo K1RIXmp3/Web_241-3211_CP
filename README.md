@@ -48,11 +48,6 @@ Windows PowerShell:
 .venv\Scripts\activate
 ```
 
-Linux/macOS:
-
-```bash
-source .venv/bin/activate
-```
 
 Установка зависимостей:
 

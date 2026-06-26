@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{% if release %}Редактирование релиза{% else %}Создание релиза{% endif %}</h1>
+<section class="card form-card">
+    <form method="post" enctype="multipart/form-data">
+        <label>Название релиза</label>
+        <input type="text" name="title" required value="{{ release.title if release else '' }}">
+
+        <label>Тип релиза</label>
+        <select name="release_type" required>
+            {% for item in ['Сингл', 'EP', 'Альбом'] %}
+                <option value="{{ item }}" {% if release and release.release_type == item %}selected{% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Дата выхода</label>
+        <input type="date" name="release_date" value="{{ release.release_date if release else '' }}">
+
+        <label>Статус</label>
+        <select name="status">
+            {% for item in ['Черновик', 'Запланирован', 'На модерации', 'Опубликован'] %}
+                <option value="{{ item }}" {% if release and release.status == item %}selected{% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Описание</label>
+        <textarea name="description" rows="5">{{ release.description if release else '' }}</textarea>
+
+        <label>Загрузка обложки</label>
+        <input type="file" name="cover_image" accept="image/*">
+        {% if release and release.cover_image %}
+            <p class="muted">Текущая обложка: {{ release.cover_image }}</p>
+        {% endif %}
+
+        <div class="form-actions">
+            <button class="btn primary" type="submit">Сохранить</button>
+            <a class="btn" href="{{ url_for('releases') }}">Отмена</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

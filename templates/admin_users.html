@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Управление пользователями</h1>
+<section class="card">
+<table>
+    <thead><tr><th>Email</th><th>Никнейм</th><th>Роль</th><th>Действие</th></tr></thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.nickname or '-' }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <form method="post" class="inline-form compact">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <select name="role">
+                            {% for role in ['admin', 'artist', 'user'] %}
+                                <option value="{{ role }}" {% if user.role == role %}selected{% endif %}>{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn small" type="submit">Сохранить</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</section>
+{% endblock %}

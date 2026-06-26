@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Открытые музыкальные релизы</h1>
+<p class="muted">Гость может просматривать опубликованные релизы! Для управления каталогом нужно войти в систему.</p>
+<div class="grid cards">
+    {% for release in releases %}
+        <article class="card release-card">
+            {% if release.cover_image %}
+                <img class="cover" src="{{ url_for('static', filename='uploads/covers/' ~ release.cover_image) }}" alt="Обложка">
+            {% else %}
+                <div class="cover placeholder">Обложка</div>
+            {% endif %}
+            <h3>{{ release.title }}</h3>
+            <p>{{ release.release_type }} · {{ release.release_date or 'без даты' }}</p>
+            <p>Артист: {{ release.artist_name }}</p>
+            <a class="btn" href="{{ url_for('release_detail', release_id=release.id) }}">Подробнее</a>
+        </article>
+    {% else %}
+        <p>Пока нет опубликованных релизов.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{% if track %}Редактирование трека{% else %}Добавление трека{% endif %}</h1>
+<p class="muted">Релиз: {{ release.title }}</p>
+<section class="card form-card">
+    <form method="post" enctype="multipart/form-data">
+        <label>Название трека</label>
+        <input type="text" name="title" required value="{{ track.title if track else '' }}">
+
+        <label>Длительность</label>
+        <input type="text" name="duration" placeholder="03:42" value="{{ track.duration if track else '' }}">
+
+        <label>Жанр</label>
+        <input type="text" name="genre" value="{{ track.genre if track else '' }}">
+
+        <label>Статус</label>
+        <select name="status">
+            {% for item in ['Черновик', 'Готов', 'Опубликован'] %}
+                <option value="{{ item }}" {% if track and track.status == item %}selected{% endif %}>{{ item }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Аудиофайл</label>
+        <input type="file" name="audio_file" accept="audio/*">
+        {% if track and track.audio_file %}
+            <p class="muted">Текущий файл: {{ track.audio_file }}</p>
+        {% endif %}
+
+        <label>Текст песни</label>
+        <textarea name="lyrics" rows="7">{{ track.lyrics if track else '' }}</textarea>
+
+        <div class="form-actions">
+            <button class="btn primary" type="submit">Сохранить</button>
+            <a class="btn" href="{{ url_for('release_detail', release_id=release.id) }}">Отмена</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

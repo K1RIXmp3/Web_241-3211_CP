@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-header">
+
+</div>
+
+<div class="stats-row">
+    <div class="stat-card"><span>Всего прослушиваний</span><strong>{{ totals.streams or 0 }}</strong></div>
+    <div class="stat-card"><span>Всего релизов</span><strong>{{ totals.releases_count or 0 }}</strong></div>
+    <div class="stat-card"><span>Топ-релиз</span><strong>{{ top_release.title if top_release else '-' }}</strong></div>
+    <div class="stat-card"><span>Площадок</span><strong>{{ totals.platforms_count or 0 }}</strong></div>
+</div>
+
+<div class="two-columns">
+    <section class="card">
+        <h2>Популярные релизы</h2>
+        <table>
+            <thead><tr><th>#</th><th>Название</th><th>Прослушивания</th><th>Дата релиза</th></tr></thead>
+            <tbody>
+                {% for release in popular_releases %}
+                    <tr><td>{{ loop.index }}</td><td>{{ release.title }}</td><td>{{ release.streams }}</td><td>{{ release.release_date or '-' }}</td></tr>
+                {% else %}
+                    <tr><td colspan="4">Нет данных</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Диаграмма прослушиваний</h2>
+        <div class="simple-chart">
+            {% for release in popular_releases %}
+                <div class="bar-row">
+                    <span>{{ release.title }}</span>
+                    <div class="bar"><div style="width: {{ (release.streams / (top_release.streams or 1) * 100) if top_release else 0 }}%"></div></div>
+                    <small>{{ release.streams }}</small>
+                </div>
+            {% else %}
+                <p class="muted">Данных для диаграммы пока нет</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<div class="two-columns">
+    <section class="card">
+        <h2>Статистика по площадкам</h2>
+        <table>
+            <thead><tr><th>Площадка</th><th>Прослушивания</th></tr></thead>
+            <tbody>
+                {% for platform in platform_stats %}
+                    <tr><td>{{ platform.name }}</td><td>{{ platform.streams }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2">Нет данных</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Прослушивания по площадкам</h2>
+        <div class="platform-list">
+            {% for platform in platform_stats %}
+                <p><strong>{{ platform.name }}</strong> — {{ platform.streams }} прослушиваний</p>
+            {% else %}
+                <p class="muted">Нет данных</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Profile</h1>
+<p class="muted">Управляйте своими личными данными и настройками аккаунта.</p>
+
+<div class="two-columns">
+    <section class="card form-card">
+        <form method="post" enctype="multipart/form-data">
+            <label>Никнейм</label>
+            <input type="text" name="nickname" value="{{ artist.nickname if artist else '' }}">
+
+            <label>Полное имя</label>
+            <input type="text" name="full_name" value="{{ artist.full_name if artist else '' }}">
+
+            <label>Email</label>
+            <input type="email" name="email" required value="{{ user.email }}">
+
+            <hr>
+            <h3>Смена пароля</h3>
+            <label>Новый пароль</label>
+            <input type="password" name="new_password" placeholder="Оставьте пустым, чтобы не менять">
+
+            <hr>
+            <h3>Аватар</h3>
+            {% if artist and artist.avatar %}
+                <img class="avatar-preview" src="{{ url_for('static', filename='uploads/avatars/' ~ artist.avatar) }}" alt="Аватар">
+            {% endif %}
+            <input type="file" name="avatar" accept="image/*">
+
+            <label>О себе</label>
+            <textarea name="bio" rows="5">{{ artist.bio if artist else '' }}</textarea>
+
+            <div class="form-actions">
+                <button class="btn primary" type="submit">Сохранить</button>
+                <a class="btn" href="{{ url_for('dashboard') }}">Отмена</a>
+            </div>
+        </form>
+    </section>
+
+    <section class="card profile-preview">
+        <h2>Предпросмотр профиля</h2>
+        {% if artist and artist.avatar %}
+            <img class="avatar-large" src="{{ url_for('static', filename='uploads/avatars/' ~ artist.avatar) }}" alt="Аватар">
+        {% else %}
+            <div class="avatar-large placeholder">Аватар</div>
+        {% endif %}
+        <h2>{{ artist.nickname if artist else 'Ваш никнейм' }}</h2>
+        <p>{{ artist.full_name if artist else 'Ваше полное имя' }}</p>
+        <p>{{ user.email }}</p>
+        <p><strong>О себе:</strong> {{ artist.bio if artist and artist.bio else 'Расскажите немного о себе...' }}</p>
+    </section>
+</div>
+{% endblock %}

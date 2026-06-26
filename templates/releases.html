@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-header">
+    <h1>Список музыкальных релизов</h1>
+    {% if current_user %}
+        <a class="btn primary" href="{{ url_for('release_create') }}">Добавить релиз</a>
+    {% endif %}
+</div>
+
+<form class="filters" method="get">
+    <input type="text" name="search" placeholder="Поиск" value="{{ search }}">
+    <select name="status">
+        <option value="">Статус: все</option>
+        {% for item in ['Черновик', 'Запланирован', 'На модерации', 'Опубликован'] %}
+            <option value="{{ item }}" {% if status == item %}selected{% endif %}>{{ item }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn" type="submit">Найти</button>
+</form>
+
+<section class="card">
+<table>
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Тип</th>
+            <th>Дата релиза</th>
+            <th>Треков</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for release in releases %}
+            <tr>
+                <td><a href="{{ url_for('release_detail', release_id=release.id) }}">{{ release.title }}</a></td>
+                <td>{{ release.release_type }}</td>
+                <td>{{ release.release_date or '-' }}</td>
+                <td>{{ release.tracks_count }}</td>
+                <td>{{ release.status }}</td>
+                <td class="actions">
+                    <a class="btn small" href="{{ url_for('release_detail', release_id=release.id) }}">Открыть</a>
+                    {% if current_user %}
+                        <a class="btn small" href="{{ url_for('release_edit', release_id=release.id) }}">Ред.</a>
+                        <form method="post" action="{{ url_for('release_delete', release_id=release.id) }}" onsubmit="return confirm('Удалить релиз?')">
+                            <button class="btn danger small" type="submit">Удал.</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="6">Релизы не найдены</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</section>
+{% endblock %}

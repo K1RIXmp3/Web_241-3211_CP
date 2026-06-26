@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-header">
+    <h1>{{ release.title }}</h1>
+    {% if can_edit %}
+        <a class="btn" href="{{ url_for('release_edit', release_id=release.id) }}">Редактировать релиз</a>
+    {% endif %}
+</div>
+
+<div class="two-columns detail-grid">
+    <section class="card">
+        <h2>Информация о релизе</h2>
+        <p><strong>Артист:</strong> {{ release.artist_name }}</p>
+        <p><strong>Тип:</strong> {{ release.release_type }}</p>
+        <p><strong>Дата выхода:</strong> {{ release.release_date or '-' }}</p>
+        <p><strong>Статус:</strong> {{ release.status }}</p>
+        <p>{{ release.description or 'Описание не заполнено.' }}</p>
+    </section>
+
+    <section class="card center">
+        <h2>Обложка</h2>
+        {% if release.cover_image %}
+            <img class="cover large" src="{{ url_for('static', filename='uploads/covers/' ~ release.cover_image) }}" alt="Обложка">
+        {% else %}
+            <div class="cover large placeholder">Нет обложки</div>
+        {% endif %}
+    </section>
+</div>
+
+<section class="card">
+    <div class="section-header">
+        <h2>Список треков</h2>
+        {% if can_edit %}
+            <a class="btn primary" href="{{ url_for('track_create', release_id=release.id) }}">Добавить трек</a>
+        {% endif %}
+    </div>
+    <table>
+        <thead>
+            <tr><th>#</th><th>Название</th><th>Жанр</th><th>Длительность</th><th>Аудио</th><th>Статус</th><th>Действия</th></tr>
+        </thead>
+        <tbody>
+            {% for track in tracks %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ track.title }}</td>
+                    <td>{{ track.genre or '-' }}</td>
+                    <td>{{ track.duration or '-' }}</td>
+                    <td>
+                        {% if track.audio_file %}
+                            <audio controls preload="none" src="{{ url_for('static', filename='uploads/audio/' ~ track.audio_file) }}"></audio>
+                        {% else %}
+                            <span class="muted">нет файла</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ track.status }}</td>
+                    <td class="actions">
+                        {% if can_edit %}
+                            <a class="btn small" href="{{ url_for('track_edit', track_id=track.id) }}">Ред.</a>
+                            <form method="post" action="{{ url_for('track_delete', track_id=track.id) }}" onsubmit="return confirm('Удалить трек?')">
+                                <button class="btn danger small" type="submit">Удал.</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="7">Треки пока не добавлены</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% if can_edit and tracks and platforms %}
+<section class="card">
+    <h2>Добавить статистику прослушиваний</h2>
+    <form class="inline-form" method="post" action="{{ url_for('statistic_add') }}">
+        <select name="track_id" required>
+            {% for track in tracks %}<option value="{{ track.id }}">{{ track.title }}</option>{% endfor %}
+        </select>
+        <select name="platform_id" required>
+            {% for platform in platforms %}<option value="{{ platform.id }}">{{ platform.name }}</option>{% endfor %}
+        </select>
+        <input type="number" name="streams_count" min="0" placeholder="Прослушивания" required>
+        <input type="date" name="report_date">
+        <button class="btn primary" type="submit">Добавить</button>
+    </form>
+</section>
+{% endif %}
+
+<section class="card">
+    <h2>Статистика по релизу</h2>
+    <table>
+        <thead><tr><th>Трек</th><th>Площадка</th><th>Прослушивания</th><th>Дата</th></tr></thead>
+        <tbody>
+            {% for row in stats %}
+                <tr><td>{{ row.track_title }}</td><td>{{ row.platform_name }}</td><td>{{ row.streams_count }}</td><td>{{ row.report_date }}</td></tr>
+            {% else %}
+                <tr><td colspan="4">Статистика пока не добавлена</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

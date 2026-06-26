@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-card">
+    <h1>Регистрация артиста</h1>
+    <form method="post">
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Пароль</label>
+        <input type="password" name="password" required>
+
+        <label>Никнейм артиста</label>
+        <input type="text" name="nickname" required>
+
+        <label>Полное имя</label>
+        <input type="text" name="full_name">
+
+        <button class="btn primary" type="submit">Зарегистрироваться</button>
+    </form>
+</section>
+{% endblock %}
